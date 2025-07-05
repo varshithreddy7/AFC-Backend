@@ -57,16 +57,24 @@ class EmailService {
           
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div>
-              <p style="margin: 0 0 5px; font-size: 13px; color: #666; font-weight: bold; text-transform: uppercase;">Name</p>
-              <p style="margin: 0; font-size: 16px; color: #000; font-weight: 500;">${data.name}</p>
+              <p style="margin: 0 0 5px; font-size: 13px; color: #666; font-weight: bold; text-transform: uppercase;">First Name</p>
+              <p style="margin: 0; font-size: 16px; color: #000; font-weight: 500;">${data.firstName}</p>
+            </div>
+            <div>
+              <p style="margin: 0 0 5px; font-size: 13px; color: #666; font-weight: bold; text-transform: uppercase;">Last Name</p>
+              <p style="margin: 0; font-size: 16px; color: #000; font-weight: 500;">${data.lastName}</p>
             </div>
             <div>
               <p style="margin: 0 0 5px; font-size: 13px; color: #666; font-weight: bold; text-transform: uppercase;">Email</p>
               <p style="margin: 0; font-size: 16px; color: #000; font-weight: 500;">${data.email}</p>
             </div>
             <div>
-              <p style="margin: 0 0 5px; font-size: 13px; color: #666; font-weight: bold; text-transform: uppercase;">Subject</p>
-              <p style="margin: 0; font-size: 16px; color: #000; font-weight: 500;">${data.subject || 'General Inquiry'}</p>
+              <p style="margin: 0 0 5px; font-size: 13px; color: #666; font-weight: bold; text-transform: uppercase;">Phone</p>
+              <p style="margin: 0; font-size: 16px; color: #000; font-weight: 500;">${data.phone}</p>
+            </div>
+            <div>
+              <p style="margin: 0 0 5px; font-size: 13px; color: #666; font-weight: bold; text-transform: uppercase;">Address</p>
+              <p style="margin: 0; font-size: 16px; color: #000; font-weight: 500;">${data.address}</p>
             </div>
             <div>
               <p style="margin: 0 0 5px; font-size: 13px; color: #666; font-weight: bold; text-transform: uppercase;">Received</p>
@@ -113,8 +121,11 @@ class EmailService {
 
 ===============================================
 
-FROM: ${data.name} <${data.email}>
-SUBJECT: ${data.subject || 'General Inquiry'}
+FIRST NAME: ${data.firstName}
+LAST NAME: ${data.lastName}
+EMAIL: ${data.email}
+PHONE: ${data.phone}
+ADDRESS: ${data.address}
 DATE: ${new Date().toLocaleString()}
 IP ADDRESS: ${clientIP}
 
