@@ -24,9 +24,9 @@ app.use(helmet({
 // Rate limiting
 app.use(generalLimiter);
 
-// Body parsing middleware with size limits
+// Body parsing middleware with optimized size limits
 app.use(express.json({ 
-  limit: '10mb',
+  limit: '1mb', // Reduced from 10mb for contact forms
   verify: (req, res, buf) => {
     req.rawBody = buf;
   }
@@ -34,7 +34,7 @@ app.use(express.json({
 
 app.use(express.urlencoded({ 
   extended: true,
-  limit: '10mb'
+  limit: '1mb' // Reduced from 10mb for contact forms
 }));
 
 // CORS configuration

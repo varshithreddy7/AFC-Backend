@@ -17,13 +17,32 @@ class EmailService {
       text: this.generateEmailText(sanitizedData, clientIP)
     };
 
-    // Send email with timeout
-    const emailPromise = transporter.sendMail(mailOptions);
+    // Send email with timeout and retry mechanism
+    const emailPromise = this.sendWithRetry(mailOptions, 3);
     const timeout = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Email timeout')), 10000)
+      setTimeout(() => reject(new Error('Email timeout after 15 seconds')), 15000)
     );
 
     return Promise.race([emailPromise, timeout]);
+  }
+
+  static async sendWithRetry(mailOptions, maxRetries) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const result = await transporter.sendMail(mailOptions);
+        console.log(`Email sent successfully on attempt ${attempt}`);
+        return result;
+      } catch (error) {
+        console.error(`Email send attempt ${attempt} failed:`, error.message);
+        
+        if (attempt === maxRetries) {
+          throw error;
+        }
+        
+        // Wait before retry (exponential backoff)
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+      }
+    }
   }
 
   static generateEmailHTML(data, clientIP) {
