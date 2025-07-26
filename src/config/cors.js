@@ -9,6 +9,8 @@ const corsOptions = {
     }
     
     const allowedOrigins = process.env.FRONTEND_URL?.split(',') || [
+      'https://www.afcofficial.in',
+      'https://afcofficial.in',
       'http://localhost:3000',
       'http://localhost:3001',
       'http://localhost:3002',
@@ -16,11 +18,7 @@ const corsOptions = {
       'https://localhost:3000',
       'https://localhost:3001',
       'https://localhost:3002',
-      'https://localhost:3005',
-      'http://127.0.0.1:3000',
-      'https://127.0.0.1:3000',
-      'http://127.0.0.1:3002',
-      'https://127.0.0.1:3002'
+      'https://localhost:3005'
     ];
     
     // Allow requests with no origin (like mobile apps or curl requests)
