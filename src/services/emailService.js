@@ -2,9 +2,14 @@ const { transporter } = require('../config/email');
 
 class EmailService {
   static async sendContactEmail(sanitizedData, clientIP) {
+    console.log('=== EMAIL SERVICE STARTING ===');
+    console.log('From:', process.env.EMAIL_USER);
+    console.log('To:', process.env.OWNER_EMAIL);
+    console.log('Subject: New Contact Form Message');
+    
     const mailOptions = {
       from: {
-        name: 'Restaurant Contact Form',
+        name: 'AFC Restaurant Contact Form',
         address: process.env.EMAIL_USER
       },
       to: process.env.OWNER_EMAIL,
@@ -20,7 +25,7 @@ class EmailService {
     // Send email with timeout and retry mechanism
     const emailPromise = this.sendWithRetry(mailOptions, 3);
     const timeout = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Email timeout after 15 seconds')), 15000)
+      setTimeout(() => reject(new Error('Email timeout after 30 seconds')), 30000)
     );
 
     return Promise.race([emailPromise, timeout]);
@@ -29,18 +34,25 @@ class EmailService {
   static async sendWithRetry(mailOptions, maxRetries) {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
+        console.log(`Attempting to send email (attempt ${attempt}/${maxRetries})...`);
         const result = await transporter.sendMail(mailOptions);
-        console.log(`Email sent successfully on attempt ${attempt}`);
+        console.log(`✓ Email sent successfully on attempt ${attempt}`);
+        console.log('Email result:', result.messageId);
         return result;
       } catch (error) {
-        console.error(`Email send attempt ${attempt} failed:`, error.message);
+        console.error(`✗ Email send attempt ${attempt} failed:`, error.message);
+        console.error('Error code:', error.code);
+        console.error('Error response:', error.response);
         
         if (attempt === maxRetries) {
-          throw error;
+          console.error('=== ALL EMAIL ATTEMPTS FAILED ===');
+          throw new Error(`Email failed after ${maxRetries} attempts: ${error.message}`);
         }
         
         // Wait before retry (exponential backoff)
-        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        const waitTime = 2000 * attempt; // 2s, 4s, 6s
+        console.log(`Waiting ${waitTime}ms before retry...`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
       }
     }
   }

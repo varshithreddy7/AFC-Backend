@@ -1,33 +1,36 @@
 const nodemailer = require('nodemailer');
 
-// Create email transporter with optimized connection pooling
+// Create email transporter optimized for Gmail and Render
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: parseInt(process.env.EMAIL_PORT) || 587,
-  secure: process.env.EMAIL_PORT === '465',
+  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false, // Use STARTTLS
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  tls: {
+    rejectUnauthorized: false
+  },
   pool: true,
-  maxConnections: 3,
-  maxMessages: 50,
-  rateDelta: 1000,
-  rateLimit: 10,
-  connectionTimeout: 10000,
-  greetingTimeout: 5000,
-  socketTimeout: 15000,
-  debug: process.env.NODE_ENV === 'development',
-  logger: process.env.NODE_ENV === 'development'
+  maxConnections: 5,
+  maxMessages: 100,
+  connectionTimeout: 60000, // 60 seconds
+  greetingTimeout: 30000,   // 30 seconds
+  socketTimeout: 60000,     // 60 seconds
+  debug: true, // Enable debug for troubleshooting
+  logger: true
 });
 
-// Verify transporter configuration
+// Verify transporter configuration with better error handling
 transporter.verify((error, success) => {
   if (error) {
-    console.error('Email transporter error:', error);
-    process.exit(1); // Exit if email configuration is wrong
+    console.error('Email transporter verification failed:', error.message);
+    console.warn('Email service will continue but may have issues sending emails');
   } else {
-    console.log('Email transporter ready');
+    console.log('✓ Gmail SMTP transporter verified and ready');
+    console.log('✓ Email service configured for:', process.env.EMAIL_USER);
   }
 });
 
